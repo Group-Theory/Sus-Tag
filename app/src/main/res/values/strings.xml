@@ -11,7 +11,10 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 
     <string name="scan_button">Start BLE scan</string>
+
     <string name="channel_id">alert</string>
-    <string name="channel_name">Tag Alert</string>
-    <string name="channel_desc">Possible tracker detected!</string>
+    <string name="channel_low_name">Tag Alert</string>
+    <string name="channel_low_desc">Possible tracker detected!</string>
+    <string name="channel_high_name">TAG ALERT!</string>
+    <string name="channel_high_desc">Check for tracker immediately!</string>
 </resources>
