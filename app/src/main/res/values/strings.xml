@@ -11,6 +11,6 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 
     <string name="channel_id">alert</string>
-    <string name="channel_name">Alert Channel</string>
+    <string name="channel_name">Tag Alert</string>
     <string name="channel_desc">Possible tracker detected!</string>
 </resources>

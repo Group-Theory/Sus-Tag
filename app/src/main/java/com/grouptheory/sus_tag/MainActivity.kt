@@ -21,6 +21,8 @@ class MainActivity : AppCompatActivity() {
 
 	private lateinit var appBarConfiguration: AppBarConfiguration
 	private lateinit var binding: ActivityMainBinding
+	private lateinit var alertBuilder: NotificationCompat.Builder
+	private var alertCounter: Int = 0
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
@@ -28,16 +30,8 @@ class MainActivity : AppCompatActivity() {
 		// Required to serve notifications
 		createNotificationChannel()
 
-		// TEST: Send bogus notification on startup
-		var builder = NotificationCompat.Builder(this, getString(R.string.channel_id))
-				.setSmallIcon(R.drawable.ic_notification_alert_24)
-				.setContentTitle(getString(R.string.channel_name))
-				.setContentText(getString(R.string.channel_desc))
-				.setPriority(NotificationCompat.PRIORITY_HIGH)
-
-		with(NotificationManagerCompat.from(this)) {
-			notify(0, builder.build())
-		}
+		// Builder used to alert user of tracker (w/ notification)
+		createBuilder()
 
 		binding = ActivityMainBinding.inflate(layoutInflater)
 		setContentView(binding.root)
@@ -93,6 +87,22 @@ class MainActivity : AppCompatActivity() {
 					as NotificationManager
 
 			notificationManager.createNotificationChannel(channel)
+		}
+	}
+
+	private fun createBuilder() {
+		alertBuilder = NotificationCompat.Builder(
+				this, getString(R.string.channel_id)
+		)
+				.setSmallIcon(R.drawable.ic_notification_alert_24)
+				.setContentTitle(getString(R.string.channel_name))
+				.setContentText(getString(R.string.channel_desc))
+				.setPriority(NotificationCompat.PRIORITY_HIGH)
+	}
+
+	private fun notifyUser() {
+		with(NotificationManagerCompat.from(this)) {
+			notify(0, alertBuilder.build())
 		}
 	}
 }
