@@ -2,6 +2,9 @@ package com.grouptheory.sus_tag
 
 import android.Manifest
 import android.app.Activity
+import android.app.job.JobInfo
+import android.app.job.JobParameters
+import android.app.job.JobService
 import android.bluetooth.*
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanFilter
@@ -136,6 +139,14 @@ class MainActivity : AppCompatActivity() {
 
 	private val startTime = System.currentTimeMillis()
 
+	/*private val decCntJobInfo: JobInfo = JobInfo.Builder(
+		0,
+		decComponent
+	)
+		.setPeriodic(30000)
+		.build()*/
+
+
 	private fun Context.hasPermission(permissionType: String): Boolean {
 		return ContextCompat.checkSelfPermission(this,
 			permissionType) == PackageManager.PERMISSION_GRANTED
@@ -213,7 +224,9 @@ class MainActivity : AppCompatActivity() {
 			LOCATION_PERMISSION_REQUEST_CODE -> {
 				if (grantResults.firstOrNull() ==
 					PackageManager.PERMISSION_DENIED) {
-						Log.println(Log.WARN, "Hi", "Anti cash money")
+						Log.println(Log.WARN, "Permission Denied",
+							"Couldn't get location perms!")
+					requestLocationPermission()
 				} else {
 					startBleScan()
 				}
