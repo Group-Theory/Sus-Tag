@@ -15,8 +15,9 @@ class MotionDetector(context: Context): SensorEventListener {
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
-        //TODO: figure out toString
-        Log.e("sensor-moment", toString(event.values[0]))
+        if (event != null) {
+            Log.e("sensor-moment", event.values[0].toString())
+        }
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
