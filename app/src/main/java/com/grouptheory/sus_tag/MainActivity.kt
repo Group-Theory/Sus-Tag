@@ -3,6 +3,8 @@ package com.grouptheory.sus_tag
 import android.Manifest
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothGatt
+import android.bluetooth.BluetoothGattCallback
 import android.bluetooth.BluetoothManager
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanFilter
@@ -23,18 +25,22 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.grouptheory.sus_tag.databinding.ActivityMainBinding
 
-private const val ENABLE_BLUETOOTH_REQUEST_CODE = 2
+private const val ENABLE_BLUETOOTH_REQUEST_CODE = 1
 private const val LOCATION_PERMISSION_REQUEST_CODE = 1
+private const val BLUETOOTH_SCAN_PERMISSION_CODE = 1
+private const val BLUETOOTH_CONNECT_PERMISSION_CODE = 1
 
 class MainActivity : AppCompatActivity() {
 
 	private lateinit var appBarConfiguration: AppBarConfiguration
 	private lateinit var binding: ActivityMainBinding
 
+	@RequiresApi(Build.VERSION_CODES.M)
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 
@@ -120,29 +126,58 @@ class MainActivity : AppCompatActivity() {
 	get() =
 		hasPermission(Manifest.permission.ACCESS_FINE_LOCATION)
 
+	private val isScanPermissionGranted
+	get() =
+		hasPermission(Manifest.permission.BLUETOOTH_SCAN)
+
+	private val isConnectPermissionGranted
+	get() =
+		hasPermission(Manifest.permission.BLUETOOTH_CONNECT)
+
 	private fun Context.hasPermission(permissionType: String): Boolean {
 		return ContextCompat.checkSelfPermission(this,
 			permissionType) == PackageManager.PERMISSION_GRANTED
 	}
 
+	@RequiresApi(Build.VERSION_CODES.M)
 	private fun startBleScan() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
 				!isLocationPermissionGranted) {
 			requestLocationPermission()
 		}
 		else {
-			bleScanner.startScan(null, scanSettings, scanCallback)
+			Log.i("OUTPUT", "In else!")
+			if (!isScanPermissionGranted) {
+				requestPermissions(
+					Array<String>(2){Manifest.permission.BLUETOOTH_SCAN},
+					BLUETOOTH_SCAN_PERMISSION_CODE
+				)
+			}
+			else {
+				if (!isConnectPermissionGranted) {
+					requestPermissions(
+						Array<String>(2){Manifest.permission.BLUETOOTH_CONNECT},
+						BLUETOOTH_CONNECT_PERMISSION_CODE
+					)
+				}
+				bleScanner.startScan(List<ScanFilter>(1){filter}, scanSettings, scanCallback)
+			}
 		}
-		bleScanner.startScan(null, scanSettings, scanCallback)
+
 	}
 
+	@RequiresApi(Build.VERSION_CODES.M)
 	private fun requestLocationPermission() {
 		if (isLocationPermissionGranted) {
 			return
 		}
 		runOnUiThread {
-			requestPermission(
+			/*requestPermission(
 				Manifest.permission.ACCESS_FINE_LOCATION,
+				LOCATION_PERMISSION_REQUEST_CODE
+			)*/
+			requestPermissions(
+				Array<String>(1){Manifest.permission.ACCESS_FINE_LOCATION},
 				LOCATION_PERMISSION_REQUEST_CODE
 			)
 			/*requestPermission(
@@ -161,6 +196,7 @@ class MainActivity : AppCompatActivity() {
 		arrayOf(permission), requestCode)
 	}
 
+	@RequiresApi(Build.VERSION_CODES.M)
 	override fun onRequestPermissionsResult(
 		requestCode: Int,
 		permissions: Array<out String>,
@@ -189,9 +225,17 @@ class MainActivity : AppCompatActivity() {
 		0x2EU,0x4AU,0x92U,0xD0U,0xFAU,0xB8U,
 		0x91U,0x01U,0x8AU).toByteArray()
 
-	val filter = ScanFilter.Builder().setManufacturerData( 0x4C,
-		manData
-	)
+	private val manData2 = ubyteArrayOf( 0x10U, 0x05U, 0x03U, 0x1CU,
+		0xE9U, 0x00U, 0x04U).toByteArray()
+
+	private val manData3 = ubyteArrayOf( 0x12U,0x19U,0x10U).toByteArray()
+
+	val filter: ScanFilter = ScanFilter.Builder().setManufacturerData( 0x4C,
+		manData3
+	).build()
+
+	val filter2: ScanFilter = ScanFilter.Builder().setDeviceAddress("EE:19:D2:91:D3:DB").build()
+
 
 	private val scanSettings = ScanSettings.Builder()
 		.setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
@@ -205,6 +249,12 @@ class MainActivity : AppCompatActivity() {
 				Log.i("ScanCallback", "Found BLE device! Name: " +
 						"${name ?: "Unamed"}, address: $address")
 			}
+		}
+	}
+
+	private val gattCallback = object : BluetoothGattCallback() {
+		override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
+			super.onConnectionStateChange(gatt, status, newState)
 		}
 	}
 }
