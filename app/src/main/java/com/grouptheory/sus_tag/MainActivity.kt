@@ -36,8 +36,8 @@ private const val ENABLE_BLUETOOTH_REQUEST_CODE = 1
 private const val LOCATION_PERMISSION_REQUEST_CODE = 1
 private const val BLUETOOTH_SCAN_PERMISSION_CODE = 1
 private const val BLUETOOTH_CONNECT_PERMISSION_CODE = 1
-private const val NOTIFICATION_THRESHOLD = 5
 private const val ACTIVITY_RECOGNITION_PERM_CODE = 1
+private const val NOTIFICATION_THRESHOLD = 5
 
 class MainActivity : AppCompatActivity() {
 
@@ -204,7 +204,10 @@ class MainActivity : AppCompatActivity() {
 							ACTIVITY_RECOGNITION_PERM_CODE
 						)
 					}
-					bleScanner.startScan(List<ScanFilter>(1){filter}, scanSettings, scanCallback)
+					bleScanner.startScan(
+						List<ScanFilter>(1){filter},
+						scanSettings,
+						scanCallback)
 
 				}
 				//Counter.start()
