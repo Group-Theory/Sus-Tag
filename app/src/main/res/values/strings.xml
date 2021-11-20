@@ -9,4 +9,6 @@
 
     <string name="hello_first_fragment">Your mom gei</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+
+    <string name="scan_button">Start BLE scan</string>
 </resources>
