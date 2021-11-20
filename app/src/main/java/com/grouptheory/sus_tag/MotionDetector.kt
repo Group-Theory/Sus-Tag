@@ -33,6 +33,6 @@ class MotionDetector(context: MainActivity): SensorEventListener {
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-        TODO("Not yet implemented")
+        Log.i("MotionDetector", "Accuracy changed...")
     }
 }
