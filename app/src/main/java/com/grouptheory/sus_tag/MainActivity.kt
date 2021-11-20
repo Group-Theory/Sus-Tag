@@ -155,18 +155,21 @@ class MainActivity : AppCompatActivity() {
 
 	private val startTime = System.currentTimeMillis()
 
-	object counter: CountDownTimer(30000, 5000) {
+	object Counter: CountDownTimer(30000, 5000) {
 		override fun onTick(millisUntilFinished: Long) {
-			//Mainly just for debug
+			//Call the method to check if enough counts reached
+			//for the tag detected to be sus
+
 			Log.i("Counter", "Counting!")
 		}
 
 		override fun onFinish() {
 			//Decrement the bluetooth stuff
+			//devicePingCnt[devicesPinged.indexOf(address)] = devicePingCnt[devicesPinged.indexOf(address)].inc()
+
 			this.start()
 		}
 	}
-
 
 	private fun Context.hasPermission(permissionType: String): Boolean {
 		return ContextCompat.checkSelfPermission(this,
@@ -194,11 +197,10 @@ class MainActivity : AppCompatActivity() {
 						BLUETOOTH_CONNECT_PERMISSION_CODE
 					)
 				}
-				counter.start()
+				Counter.start()
 				bleScanner.startScan(List<ScanFilter>(1){filter}, scanSettings, scanCallback)
 			}
 		}
-
 	}
 
 	@RequiresApi(Build.VERSION_CODES.M)
@@ -223,6 +225,7 @@ class MainActivity : AppCompatActivity() {
 				Manifest.permission.BLUETOOTH_SCAN,
 				ENABLE_BLUETOOTH_REQUEST_CODE)*/
 		}
+
 	}
 
 	private fun Activity.requestPermission(permission: String,
@@ -278,12 +281,20 @@ class MainActivity : AppCompatActivity() {
 		.setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
 		.build()
 
-	private val devicesPinged: MutableList<String> = mutableListOf("")
-	private val devicePingCnt: MutableList<Int> = mutableListOf(0)
+	val devicesPinged: MutableList<String> = mutableListOf("")
+	val devicePingCnt: MutableList<Int> = mutableListOf(0)
 
 	//Make a for loop of some kind that runs every so often
 	//that decrements the value of the devicePingCnt by 1, then if
 	//it is 0 at that index removes that index from both arrays
+
+	fun makeNotify () {
+		for (item in devicePingCnt) {
+			if (item >= 30) {
+				//notifyUser()
+			}
+		}
+	}
 
 	private val scanCallback = object : ScanCallback() {
 		override fun onScanResult(callbackType: Int, result:
@@ -298,6 +309,7 @@ class MainActivity : AppCompatActivity() {
 				} else {
 					devicesPinged.add(address)
 					devicePingCnt.add(devicesPinged.indexOf(address), 1)
+					makeNotify()
 				}
 				Log.i("DevicesPinged", devicesPinged.toString())
 				Log.i("Device Ping Count: ", devicePingCnt.toString())
