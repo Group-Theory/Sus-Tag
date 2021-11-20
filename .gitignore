@@ -13,8 +13,7 @@
 .externalNativeBuild
 .cxx
 local.properties
-app/.project
+.project
 .settings/org.eclipse.buildship.core.prefs
 app/.classpath
-.project
 app/.settings/org.eclipse.buildship.core.prefs
