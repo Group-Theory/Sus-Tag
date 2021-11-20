@@ -298,6 +298,7 @@ class MainActivity : AppCompatActivity() {
 
 	val devicesPinged: MutableList<String> = mutableListOf("")
 	val devicePingCnt: MutableList<Int> = mutableListOf(0)
+	val firstStepCnt: MutableList<Int> = mutableListOf(0)
 
 	//Make a for loop of some kind that runs every so often
 	//that decrements the value of the devicePingCnt by 1, then if
@@ -308,15 +309,25 @@ class MainActivity : AppCompatActivity() {
 			if (
 					item == NOTIFICATION_THRESHOLD
 			) {
-				Log.i("Notify", "Should notify")
-				notifyUserLow()
+				Log.i("Notify", firstStepCnt[devicePingCnt.indexOf(item)].toString())
+				Log.i("Notify step count", stepsCount.toString())
+				if (
+					(stepsCount - firstStepCnt[devicePingCnt.indexOf(item)]) >= 10
+				) {
+
+					notifyUserLow()
+				}
 			} else if (
 					item != 0
 					&& item % NOTIFICATION_THRESHOLD == 0
 					&& item > NOTIFICATION_THRESHOLD
 			) {
-				Log.i("Notify", "Should notify")
-				notifyUserHigh()
+				if (
+					(stepsCount - firstStepCnt[devicePingCnt.indexOf(item)]) >= 10
+				) {
+					Log.i("Notify", "Should notify")
+					notifyUserHigh()
+				}
 			}
 		}
 	}
@@ -334,6 +345,7 @@ class MainActivity : AppCompatActivity() {
 				} else {
 					devicesPinged.add(address)
 					devicePingCnt.add(devicesPinged.indexOf(address), 1)
+					firstStepCnt.add(devicesPinged.indexOf(address), stepsCount.toInt())
 				}
 				makeNotify()
 				Log.i("DevicesPinged", devicesPinged.toString())
@@ -402,7 +414,10 @@ class MainActivity : AppCompatActivity() {
 		alertCounter++
 	}
 
+	private var stepsCount: Float = 0.0.toFloat()
+
 	fun accelDetected(stepCount: Float) {
 		Log.e("Main-accel-detected", stepCount.toString())
+		stepsCount = stepCount
 	}
 }
