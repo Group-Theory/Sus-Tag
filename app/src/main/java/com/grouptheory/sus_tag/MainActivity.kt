@@ -36,6 +36,7 @@ private const val ENABLE_BLUETOOTH_REQUEST_CODE = 1
 private const val LOCATION_PERMISSION_REQUEST_CODE = 1
 private const val BLUETOOTH_SCAN_PERMISSION_CODE = 1
 private const val BLUETOOTH_CONNECT_PERMISSION_CODE = 1
+private const val NOTIFICATION_THRESHOLD = 5
 
 class MainActivity : AppCompatActivity() {
 
@@ -282,9 +283,21 @@ class MainActivity : AppCompatActivity() {
 
 	fun makeNotify () {
 		for (item in devicePingCnt) {
-			if (item != 0 && item % 30 == 0) {
+			if (
+					item != 0
+					&& item % NOTIFICATION_THRESHOLD == 0
+					&& item > 0
+					&& item < NOTIFICATION_THRESHOLD
+			) {
 				Log.i("Notify", "Should notify")
 				notifyUserLow()
+			} else if (
+					item != 0
+					&& item % NOTIFICATION_THRESHOLD == 0
+					&& item > NOTIFICATION_THRESHOLD
+			) {
+				Log.i("Notify", "Should notify")
+				notifyUserHigh()
 			}
 		}
 	}
@@ -316,45 +329,61 @@ class MainActivity : AppCompatActivity() {
 		}
 	}
 
-		private fun createNotificationChannel() {
-			// Builds a notification channel used for tracker detection alerts
-			// Only on API 26+
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-				val notificationId = getString(R.string.channel_id)
-				val name = getString(R.string.channel_low_name)
-				val desc = getString(R.string.channel_low_desc)
-				val priority = NotificationManager.IMPORTANCE_HIGH
-				val channel = NotificationChannel(notificationId, name, priority)
-						.apply { description = desc }
+	private fun createNotificationChannel() {
+		// Builds a notification channel used for tracker detection alerts
+		// Only on API 26+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			val notificationId = getString(R.string.channel_id)
+			val name = getString(R.string.channel_low_name)
+			val desc = getString(R.string.channel_low_desc)
+			val priority = NotificationManager.IMPORTANCE_HIGH
+			val channel = NotificationChannel(notificationId, name, priority)
+					.apply { description = desc }
 
-				// After building notification, register it with the OS
-				val notificationManager: NotificationManager =
-						getSystemService(Context.NOTIFICATION_SERVICE)
-								as NotificationManager
+			// After building notification, register it with the OS
+			val notificationManager: NotificationManager =
+					getSystemService(Context.NOTIFICATION_SERVICE)
+							as NotificationManager
 
-				notificationManager.createNotificationChannel(channel)
-			}
-		}
-
-		private fun createBuilders() {
-			lowAlertBuilder = NotificationCompat.Builder(
-					this, getString(R.string.channel_id)
-			)
-					.setSmallIcon(R.drawable.ic_notification_alert_24)
-					.setContentTitle(getString(R.string.channel_low_name))
-					.setContentText(getString(R.string.channel_low_desc))
-					.setPriority(NotificationCompat.PRIORITY_HIGH)
-		}
-
-		private fun notifyUserLow() {
-			with(NotificationManagerCompat.from(this)) {
-				notify(alertCounter, lowAlertBuilder.build())
-			}
-
-			alertCounter++
-		}
-
-		fun accelDetected() {
-			Log.e("Main", "TODO: implement accelDetected")
+			notificationManager.createNotificationChannel(channel)
 		}
 	}
+
+	private fun createBuilders() {
+		lowAlertBuilder = NotificationCompat.Builder(
+				this, getString(R.string.channel_id)
+		)
+				.setSmallIcon(R.drawable.ic_notification_alert_24)
+				.setContentTitle(getString(R.string.channel_low_name))
+				.setContentText(getString(R.string.channel_low_desc))
+				.setPriority(NotificationCompat.PRIORITY_HIGH)
+
+		highAlertBuilder = NotificationCompat.Builder(
+				this, getString(R.string.channel_id)
+		)
+				.setSmallIcon(R.drawable.ic_high_alert_24)
+				.setContentTitle(getString(R.string.channel_high_name))
+				.setContentText(getString(R.string.channel_high_desc))
+				.setPriority(NotificationCompat.PRIORITY_MAX)
+	}
+
+	private fun notifyUserLow() {
+		with(NotificationManagerCompat.from(this)) {
+			notify(alertCounter, lowAlertBuilder.build())
+		}
+
+		alertCounter++
+	}
+
+	private fun notifyUserHigh() {
+		with(NotificationManagerCompat.from(this)) {
+			notify(alertCounter, highAlertBuilder.build())
+		}
+
+		alertCounter++
+	}
+
+	fun accelDetected() {
+		Log.e("Main", "TODO: implement accelDetected")
+	}
+}
