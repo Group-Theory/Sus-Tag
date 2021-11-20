@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
 
 		// Builder used to alert user of tracker (w/ notification)
 		createBuilder()
-
+		
 		binding = ActivityMainBinding.inflate(layoutInflater)
 		setContentView(binding.root)
 
@@ -102,7 +102,9 @@ class MainActivity : AppCompatActivity() {
 
 	private fun notifyUser() {
 		with(NotificationManagerCompat.from(this)) {
-			notify(0, alertBuilder.build())
+			notify(alertCounter, alertBuilder.build())
 		}
+
+		alertCounter++
 	}
 }
