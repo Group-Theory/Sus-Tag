@@ -371,7 +371,7 @@ class MainActivity : AppCompatActivity() {
 			alertCounter++
 		}
 
-		fun accelDetected() {
-			Log.e("Main", "TODO: implement accelDetected")
+		fun accelDetected(stepCount: Float) {
+			Log.e("Main-accel-detected", stepCount.toString())
 		}
 	}
