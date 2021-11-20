@@ -71,6 +71,8 @@ class MainActivity : AppCompatActivity() {
 			startBleScan()
 		}
 		val motionDetector = MotionDetector(this)
+
+		startBleScan()
 	}
 
 	override fun onCreateOptionsMenu(menu: Menu): Boolean {
