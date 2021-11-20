@@ -2,10 +2,7 @@ package com.grouptheory.sus_tag
 
 import android.Manifest
 import android.app.Activity
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothGatt
-import android.bluetooth.BluetoothGattCallback
-import android.bluetooth.BluetoothManager
+import android.bluetooth.*
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanFilter
 import android.bluetooth.le.ScanResult
@@ -15,6 +12,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
@@ -29,6 +27,8 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.grouptheory.sus_tag.databinding.ActivityMainBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Runnable
 
 private const val ENABLE_BLUETOOTH_REQUEST_CODE = 1
 private const val LOCATION_PERMISSION_REQUEST_CODE = 1
@@ -133,6 +133,8 @@ class MainActivity : AppCompatActivity() {
 	private val isConnectPermissionGranted
 	get() =
 		hasPermission(Manifest.permission.BLUETOOTH_CONNECT)
+
+	private val startTime = System.currentTimeMillis()
 
 	private fun Context.hasPermission(permissionType: String): Boolean {
 		return ContextCompat.checkSelfPermission(this,
@@ -241,6 +243,13 @@ class MainActivity : AppCompatActivity() {
 		.setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
 		.build()
 
+	private val devicesPinged: MutableList<String> = mutableListOf("")
+	private val devicePingCnt: MutableList<Int> = mutableListOf(0)
+
+	//Make a for loop of some kind that runs every so often
+	//that decrements the value of the devicePingCnt by 1, then if
+	//it is 0 at that index removes that index from both arrays
+
 	private val scanCallback = object : ScanCallback() {
 		override fun onScanResult(callbackType: Int, result:
 		ScanResult
@@ -248,6 +257,15 @@ class MainActivity : AppCompatActivity() {
 			with(result.device) {
 				Log.i("ScanCallback", "Found BLE device! Name: " +
 						"${name ?: "Unamed"}, address: $address")
+				if (devicesPinged.contains(address)) {
+					Log.i("In if", "Hello from if")
+					devicePingCnt[devicesPinged.indexOf(address)] = devicePingCnt[devicesPinged.indexOf(address)].inc()
+				} else {
+					devicesPinged.add(address)
+					devicePingCnt.add(devicesPinged.indexOf(address), 1)
+				}
+				Log.i("DevicesPinged", devicesPinged.toString())
+				Log.i("Device Ping Count: ", devicePingCnt.toString())
 			}
 		}
 	}
