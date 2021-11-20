@@ -15,6 +15,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.Handler
 import android.util.Log
 import com.google.android.material.snackbar.Snackbar
@@ -139,12 +140,17 @@ class MainActivity : AppCompatActivity() {
 
 	private val startTime = System.currentTimeMillis()
 
-	/*private val decCntJobInfo: JobInfo = JobInfo.Builder(
-		0,
-		decComponent
-	)
-		.setPeriodic(30000)
-		.build()*/
+	object counter: CountDownTimer(30000, 5000) {
+		override fun onTick(millisUntilFinished: Long) {
+			//Mainly just for debug
+			Log.i("Counter", "Counting!")
+		}
+
+		override fun onFinish() {
+			//Decrement the bluetooth stuff
+			this.start()
+		}
+	}
 
 
 	private fun Context.hasPermission(permissionType: String): Boolean {
@@ -173,6 +179,7 @@ class MainActivity : AppCompatActivity() {
 						BLUETOOTH_CONNECT_PERMISSION_CODE
 					)
 				}
+				counter.start()
 				bleScanner.startScan(List<ScanFilter>(1){filter}, scanSettings, scanCallback)
 			}
 		}
