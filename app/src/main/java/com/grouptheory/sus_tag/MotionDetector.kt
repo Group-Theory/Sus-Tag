@@ -16,7 +16,9 @@ class MotionDetector(context: Context): SensorEventListener {
 
     override fun onSensorChanged(event: SensorEvent?) {
         if (event != null) {
-            Log.e("sensor-moment", event.values[0].toString())
+            Log.i("sensor-moment-x", event.values[0].toString())
+            Log.i("sensor-moment-y", event.values[1].toString())
+            Log.i("sensor-moment-z", event.values[2].toString())
         }
     }
 
