@@ -37,6 +37,7 @@ private const val LOCATION_PERMISSION_REQUEST_CODE = 1
 private const val BLUETOOTH_SCAN_PERMISSION_CODE = 1
 private const val BLUETOOTH_CONNECT_PERMISSION_CODE = 1
 private const val NOTIFICATION_THRESHOLD = 5
+private const val ACTIVITY_RECOGNITION_PERM_CODE = 1
 
 class MainActivity : AppCompatActivity() {
 
@@ -74,6 +75,8 @@ class MainActivity : AppCompatActivity() {
 			startBleScan()
 		}
 		val motionDetector = MotionDetector(this)
+
+		startBleScan()
 	}
 
 	override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -146,9 +149,13 @@ class MainActivity : AppCompatActivity() {
 	get() =
 		hasPermission(Manifest.permission.BLUETOOTH_CONNECT)
 
+	private val isActivityRecognitionPermGranted
+	get() =
+		hasPermission(Manifest.permission.ACTIVITY_RECOGNITION)
+
 	private val startTime = System.currentTimeMillis()
 
-	object Counter: CountDownTimer(30000, 5000) {
+	/*object Counter: CountDownTimer(30000, 5000) {
 		override fun onTick(millisUntilFinished: Long) {
 			//Call the method to check if enough counts reached
 			//for the tag detected to be sus
@@ -162,7 +169,7 @@ class MainActivity : AppCompatActivity() {
 
 			this.start()
 		}
-	}
+	}*/
 
 	private fun Context.hasPermission(permissionType: String): Boolean {
 		return ContextCompat.checkSelfPermission(this,
@@ -186,12 +193,21 @@ class MainActivity : AppCompatActivity() {
 			else {
 				if (!isConnectPermissionGranted) {
 					requestPermissions(
-						Array<String>(2){Manifest.permission.BLUETOOTH_CONNECT},
+						Array<String>(1){Manifest.permission.BLUETOOTH_CONNECT},
 						BLUETOOTH_CONNECT_PERMISSION_CODE
 					)
 				}
-				Counter.start()
-				bleScanner.startScan(List<ScanFilter>(1){filter}, scanSettings, scanCallback)
+				else {
+					if (!isActivityRecognitionPermGranted) {
+						requestPermissions(
+							Array<String>(1){Manifest.permission.ACTIVITY_RECOGNITION},
+							ACTIVITY_RECOGNITION_PERM_CODE
+						)
+					}
+					bleScanner.startScan(List<ScanFilter>(1){filter}, scanSettings, scanCallback)
+
+				}
+				//Counter.start()
 			}
 		}
 	}
@@ -252,15 +268,18 @@ class MainActivity : AppCompatActivity() {
 		}
 	}
 
+	@ExperimentalUnsignedTypes
 	private val manData = ubyteArrayOf( 0x12U,0x19U,0x10U,0x74U,
 		0xB8U,0xB8U,0xF7U,0x4FU,0xF3U,0x38U,0x99U,
 		0xEDU,0x82U,0xEBU,0x6BU,0x61U,0xD3U,0x57U,
 		0x2EU,0x4AU,0x92U,0xD0U,0xFAU,0xB8U,
 		0x91U,0x01U,0x8AU).toByteArray()
 
+	@ExperimentalUnsignedTypes
 	private val manData2 = ubyteArrayOf( 0x10U, 0x05U, 0x03U, 0x1CU,
 		0xE9U, 0x00U, 0x04U).toByteArray()
 
+	@ExperimentalUnsignedTypes
 	private val manData3 = ubyteArrayOf( 0x12U,0x19U,0x10U).toByteArray()
 
 	val filter: ScanFilter = ScanFilter.Builder().setManufacturerData( 0x4C,
@@ -380,7 +399,7 @@ class MainActivity : AppCompatActivity() {
 		alertCounter++
 	}
 
-	fun accelDetected() {
-		Log.e("Main", "TODO: implement accelDetected")
+	fun accelDetected(stepCount: Float) {
+		Log.e("Main-accel-detected", stepCount.toString())
 	}
 }
