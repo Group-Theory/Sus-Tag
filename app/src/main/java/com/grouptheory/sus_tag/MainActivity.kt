@@ -2,6 +2,7 @@ package com.grouptheory.sus_tag
 
 import android.Manifest
 import android.app.Activity
+import android.app.Notification
 import android.bluetooth.*
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanFilter
@@ -40,7 +41,8 @@ class MainActivity : AppCompatActivity() {
 
 	private lateinit var appBarConfiguration: AppBarConfiguration
 	private lateinit var binding: ActivityMainBinding
-	private lateinit var alertBuilder: NotificationCompat.Builder
+	private lateinit var lowAlertBuilder: NotificationCompat.Builder
+	private lateinit var highAlertBuilder: NotificationCompat.Builder
 	private var alertCounter: Int = 0
 
 	@RequiresApi(Build.VERSION_CODES.M)
@@ -51,7 +53,7 @@ class MainActivity : AppCompatActivity() {
 		createNotificationChannel()
 
 		// Builder used to alert user of tracker (w/ notification)
-		createBuilder()
+		createBuilders()
 		
 		binding = ActivityMainBinding.inflate(layoutInflater)
 		setContentView(binding.root)
@@ -282,7 +284,7 @@ class MainActivity : AppCompatActivity() {
 		for (item in devicePingCnt) {
 			if (item != 0 && item % 30 == 0) {
 				Log.i("Notify", "Should notify")
-				notifyUser()
+				notifyUserLow()
 			}
 		}
 	}
@@ -319,8 +321,8 @@ class MainActivity : AppCompatActivity() {
 			// Only on API 26+
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 				val notificationId = getString(R.string.channel_id)
-				val name = getString(R.string.channel_name)
-				val desc = getString(R.string.channel_desc)
+				val name = getString(R.string.channel_low_name)
+				val desc = getString(R.string.channel_low_desc)
 				val priority = NotificationManager.IMPORTANCE_HIGH
 				val channel = NotificationChannel(notificationId, name, priority)
 						.apply { description = desc }
@@ -334,19 +336,19 @@ class MainActivity : AppCompatActivity() {
 			}
 		}
 
-		private fun createBuilder() {
-			alertBuilder = NotificationCompat.Builder(
+		private fun createBuilders() {
+			lowAlertBuilder = NotificationCompat.Builder(
 					this, getString(R.string.channel_id)
 			)
 					.setSmallIcon(R.drawable.ic_notification_alert_24)
-					.setContentTitle(getString(R.string.channel_name))
-					.setContentText(getString(R.string.channel_desc))
+					.setContentTitle(getString(R.string.channel_low_name))
+					.setContentText(getString(R.string.channel_low_desc))
 					.setPriority(NotificationCompat.PRIORITY_HIGH)
 		}
 
-		private fun notifyUser() {
+		private fun notifyUserLow() {
 			with(NotificationManagerCompat.from(this)) {
-				notify(alertCounter, alertBuilder.build())
+				notify(alertCounter, lowAlertBuilder.build())
 			}
 
 			alertCounter++
