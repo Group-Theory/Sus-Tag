@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -46,6 +47,8 @@ class MainActivity : AppCompatActivity() {
 			Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 				.setAction("Action", null).show()
 		}
+
+		val motionDetector = MotionDetector(this)
 	}
 
 	override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -106,5 +109,9 @@ class MainActivity : AppCompatActivity() {
 		}
 
 		alertCounter++
+	}
+
+	fun accelDetected() {
+		Log.e("Main", "TODO: implement accelDetected")
 	}
 }
