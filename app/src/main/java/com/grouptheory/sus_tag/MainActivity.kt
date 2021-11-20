@@ -201,7 +201,10 @@ class MainActivity : AppCompatActivity() {
 							ACTIVITY_RECOGNITION_PERM_CODE
 						)
 					}
-					bleScanner.startScan(List<ScanFilter>(1){filter}, scanSettings, scanCallback)
+					bleScanner.startScan(
+						List<ScanFilter>(1){filter},
+						scanSettings,
+						scanCallback)
 
 				}
 				//Counter.start()
