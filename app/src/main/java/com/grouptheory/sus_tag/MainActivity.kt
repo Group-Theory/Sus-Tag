@@ -284,10 +284,7 @@ class MainActivity : AppCompatActivity() {
 	fun makeNotify () {
 		for (item in devicePingCnt) {
 			if (
-					item != 0
-					&& item % NOTIFICATION_THRESHOLD == 0
-					&& item > 0
-					&& item < NOTIFICATION_THRESHOLD
+					item == NOTIFICATION_THRESHOLD
 			) {
 				Log.i("Notify", "Should notify")
 				notifyUserLow()
