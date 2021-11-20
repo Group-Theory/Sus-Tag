@@ -14,6 +14,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.grouptheory.sus_tag.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -27,8 +28,16 @@ class MainActivity : AppCompatActivity() {
 		// Required to serve notifications
 		createNotificationChannel()
 
-		// TO-DO
 		// TEST: Send bogus notification on startup
+		var builder = NotificationCompat.Builder(this, getString(R.string.channel_id))
+				.setSmallIcon(R.drawable.ic_notification_alert_24)
+				.setContentTitle(getString(R.string.channel_name))
+				.setContentText(getString(R.string.channel_desc))
+				.setPriority(NotificationCompat.PRIORITY_HIGH)
+
+		with(NotificationManagerCompat.from(this)) {
+			notify(0, builder.build())
+		}
 
 		binding = ActivityMainBinding.inflate(layoutInflater)
 		setContentView(binding.root)
