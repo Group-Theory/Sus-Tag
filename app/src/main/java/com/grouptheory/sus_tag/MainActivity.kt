@@ -280,8 +280,9 @@ class MainActivity : AppCompatActivity() {
 
 	fun makeNotify () {
 		for (item in devicePingCnt) {
-			if (item >= 30) {
-				//notifyUser()
+			if (item != 0 && item % 30 == 0) {
+				Log.i("Notify", "Should notify")
+				notifyUser()
 			}
 		}
 	}
@@ -299,8 +300,8 @@ class MainActivity : AppCompatActivity() {
 				} else {
 					devicesPinged.add(address)
 					devicePingCnt.add(devicesPinged.indexOf(address), 1)
-					makeNotify()
 				}
+				makeNotify()
 				Log.i("DevicesPinged", devicesPinged.toString())
 				Log.i("Device Ping Count: ", devicePingCnt.toString())
 			}
