@@ -155,22 +155,6 @@ class MainActivity : AppCompatActivity() {
 
 	private val startTime = System.currentTimeMillis()
 
-	/*object Counter: CountDownTimer(30000, 5000) {
-		override fun onTick(millisUntilFinished: Long) {
-			//Call the method to check if enough counts reached
-			//for the tag detected to be sus
-
-			Log.i("Counter", "Counting!")
-		}
-
-		override fun onFinish() {
-			//Decrement the bluetooth stuff
-			//devicePingCnt[devicesPinged.indexOf(address)] = devicePingCnt[devicesPinged.indexOf(address)].inc()
-
-			this.start()
-		}
-	}*/
-
 	private fun Context.hasPermission(permissionType: String): Boolean {
 		return ContextCompat.checkSelfPermission(this,
 			permissionType) == PackageManager.PERMISSION_GRANTED
@@ -210,32 +194,21 @@ class MainActivity : AppCompatActivity() {
 						scanCallback)
 
 				}
-				//Counter.start()
 			}
 		}
 	}
 
+	//Helper for requesting the location permissions
 	@RequiresApi(Build.VERSION_CODES.M)
 	private fun requestLocationPermission() {
 		if (isLocationPermissionGranted) {
 			return
 		}
 		runOnUiThread {
-			/*requestPermission(
-				Manifest.permission.ACCESS_FINE_LOCATION,
-				LOCATION_PERMISSION_REQUEST_CODE
-			)*/
 			requestPermissions(
 				Array<String>(1){Manifest.permission.ACCESS_FINE_LOCATION},
 				LOCATION_PERMISSION_REQUEST_CODE
 			)
-			/*requestPermission(
-				Manifest.permission.ACCESS_COARSE_LOCATION,
-				LOCATION_PERMISSION_REQUEST_CODE
-			)
-			requestPermission(
-				Manifest.permission.BLUETOOTH_SCAN,
-				ENABLE_BLUETOOTH_REQUEST_CODE)*/
 		}
 
 	}
