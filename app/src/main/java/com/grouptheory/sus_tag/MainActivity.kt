@@ -2,9 +2,6 @@ package com.grouptheory.sus_tag
 
 import android.Manifest
 import android.app.Activity
-import android.app.job.JobInfo
-import android.app.job.JobParameters
-import android.app.job.JobService
 import android.bluetooth.*
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanFilter
@@ -16,12 +13,8 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.os.Handler
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.Context
-import android.os.Build
-import android.os.Bundle
 import android.util.Log
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
@@ -31,15 +24,12 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.grouptheory.sus_tag.databinding.ActivityMainBinding
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Runnable
 
 private const val ENABLE_BLUETOOTH_REQUEST_CODE = 1
 private const val LOCATION_PERMISSION_REQUEST_CODE = 1
@@ -321,45 +311,47 @@ class MainActivity : AppCompatActivity() {
 		override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
 			super.onConnectionStateChange(gatt, status, newState)
 		}
-	private fun createNotificationChannel() {
-		// Builds a notification channel used for tracker detection alerts
-		// Only on API 26+
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-			val notificationId = getString(R.string.channel_id)
-			val name = getString(R.string.channel_name)
-			val desc = getString(R.string.channel_desc)
-			val priority = NotificationManager.IMPORTANCE_HIGH
-			val channel = NotificationChannel(notificationId, name, priority)
-					.apply { description = desc }
-
-			// After building notification, register it with the OS
-			val notificationManager: NotificationManager =
-				getSystemService(Context.NOTIFICATION_SERVICE)
-					as NotificationManager
-
-			notificationManager.createNotificationChannel(channel)
-		}
 	}
 
-	private fun createBuilder() {
-		alertBuilder = NotificationCompat.Builder(
-				this, getString(R.string.channel_id)
-		)
-				.setSmallIcon(R.drawable.ic_notification_alert_24)
-				.setContentTitle(getString(R.string.channel_name))
-				.setContentText(getString(R.string.channel_desc))
-				.setPriority(NotificationCompat.PRIORITY_HIGH)
-	}
+		private fun createNotificationChannel() {
+			// Builds a notification channel used for tracker detection alerts
+			// Only on API 26+
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+				val notificationId = getString(R.string.channel_id)
+				val name = getString(R.string.channel_name)
+				val desc = getString(R.string.channel_desc)
+				val priority = NotificationManager.IMPORTANCE_HIGH
+				val channel = NotificationChannel(notificationId, name, priority)
+						.apply { description = desc }
 
-	private fun notifyUser() {
-		with(NotificationManagerCompat.from(this)) {
-			notify(alertCounter, alertBuilder.build())
+				// After building notification, register it with the OS
+				val notificationManager: NotificationManager =
+						getSystemService(Context.NOTIFICATION_SERVICE)
+								as NotificationManager
+
+				notificationManager.createNotificationChannel(channel)
+			}
 		}
 
-		alertCounter++
-	}
+		private fun createBuilder() {
+			alertBuilder = NotificationCompat.Builder(
+					this, getString(R.string.channel_id)
+			)
+					.setSmallIcon(R.drawable.ic_notification_alert_24)
+					.setContentTitle(getString(R.string.channel_name))
+					.setContentText(getString(R.string.channel_desc))
+					.setPriority(NotificationCompat.PRIORITY_HIGH)
+		}
 
-	fun accelDetected() {
-		Log.e("Main", "TODO: implement accelDetected")
+		private fun notifyUser() {
+			with(NotificationManagerCompat.from(this)) {
+				notify(alertCounter, alertBuilder.build())
+			}
+
+			alertCounter++
+		}
+
+		fun accelDetected() {
+			Log.e("Main", "TODO: implement accelDetected")
+		}
 	}
-}
