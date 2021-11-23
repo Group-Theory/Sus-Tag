@@ -11,6 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/hello_first_fragment"
+        android:textColor="#FFFFFF"
         app:layout_constraintBottom_toTopOf="@id/button_first"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -27,4 +28,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textview_first"
         tools:visibility="invisible" />
+
+    <EditText
+        android:id="@+id/TextMultiLine"
+        android:layout_width="238dp"
+        android:layout_height="184dp"
+        android:layout_marginStart="87dp"
+        android:layout_marginTop="272dp"
+        android:ems="10"
+        android:gravity="center|top"
+        android:inputType="textMultiLine"
+        android:text="@string/app_intro"
+        android:textColor="#FFFFFF"
+        app:flow_firstHorizontalStyle="packed"
+        app:layout_constraintBaseline_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_editor_absoluteX="100px"
+        app:layout_editor_absoluteY="200px" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,6 +5,9 @@
     <string name="first_fragment_label"></string>
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
+    <string name="app_intro">
+        The app started checking for trackers when you opened it, so feel free to let it run in the background and we\'ll notify you if we detect anything suspicious!
+    </string>
     <string name="previous">Previous</string>
 
     <string name="hello_first_fragment">
